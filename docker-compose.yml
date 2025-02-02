@@ -1,0 +1,29 @@
+version: "3"
+services:
+  django:
+    build: .
+    container_name: django-node-container
+    ports:
+      - '8000:8000'
+    networks:
+      - django-net
+  
+  app:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./build:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/sites-available/default
+    depends_on:
+      - django
+    networks:
+      - django-net
+
+networks:
+  django-net:
+    driver: bridge
+    
